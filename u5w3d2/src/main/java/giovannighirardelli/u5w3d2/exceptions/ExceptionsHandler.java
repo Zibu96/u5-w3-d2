@@ -3,6 +3,7 @@ package giovannighirardelli.u5w3d2.exceptions;
 
 import giovannighirardelli.u5w3d2.payloads.ErrorsDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,6 +25,12 @@ public class ExceptionsHandler {
             return new ErrorsDTO(ex.getMessage(), LocalDateTime.now());
         }
     }
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorsDTO handleForbidden(AuthorizationDeniedException ex) {
+        return new ErrorsDTO("Non hai accesso a questa funzionalità", LocalDateTime.now());
+    }
+
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,8 @@ public class DipendentiService {
     private DipendentiRepository dipendentiRepository;
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private PasswordEncoder bCrypt;
 
 
     public Page<Dipendenti> getDipendenti(int pageNumber, int pageSize, String sortBy){
@@ -37,7 +40,7 @@ public class DipendentiService {
         if (this.dipendentiRepository.existsByEmail(body.email())) throw new BadRequestException("Il dipendente con " + body.email() + " esiste già");
         if (this.dipendentiRepository.existsByUsername(body.username())) throw new BadRequestException("Il dipendente con " + body.username() + " esiste già");
 
-        Dipendenti dipendenti = new Dipendenti(body.username(), body.name(), body.lastName(), body.email(), "https://ui-avatars.com/api/?name=" + body.name() + "+" + body.lastName(), body.password());
+        Dipendenti dipendenti = new Dipendenti(body.username(), body.name(), body.lastName(), body.email(), "https://ui-avatars.com/api/?name=" + body.name() + "+" + body.lastName(), bCrypt.encode(body.password()));
 
 
         return this.dipendentiRepository.save(dipendenti);
